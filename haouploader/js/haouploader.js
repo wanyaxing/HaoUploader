@@ -121,7 +121,7 @@ var HaoUploader = {
                 $('<div class="imgWrap"></div>').prependTo($li);
             }
 
-            var $prgress = $li.find('p.progress').css({'opacity':'0.5'}),
+            var $prgress = $li.find('p.progress').css({'opacity':'0'}),
 
             $wrap = $li.find( 'div.imgWrap' ),
 
