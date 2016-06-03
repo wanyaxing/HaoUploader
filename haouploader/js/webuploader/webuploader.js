@@ -2349,7 +2349,7 @@
                         size = file.size;
 
                         // 如果压缩后，比原来还大则不用压缩后的。
-                        if ( !noCompressIfLarger || blob.size < size ) {
+                        if (blob.size>0 && ( !noCompressIfLarger || blob.size < size )) {
                             // file.source.destroy && file.source.destroy();
                             file.source = blob;
                             file.size = blob.size;
@@ -3019,7 +3019,9 @@
 
                 file = file.id ? file : me.queue.getFile( file );
 
-                if(!me.queue.getFile( file.id )){return false;} //axing add
+                if( !me.queue.getFile( file.id ) ) {
+                    return false;
+                }
 
                 this.request( 'cancel-file', file );
 
@@ -3117,6 +3119,7 @@
         });
 
     });
+
     /**
      * @fileOverview 添加获取Runtime相关信息的方法。
      */

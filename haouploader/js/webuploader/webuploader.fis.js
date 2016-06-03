@@ -1157,7 +1157,7 @@ module.exports = (function( root, factory ) {
                 return;
             }
     
-            RuntimeClent.call( this, 'DragAndDrop' );
+            RuntimeClent.call( this, 'DragAndDrop', true );
         }
     
         DragAndDrop.options = {
@@ -1182,6 +1182,7 @@ module.exports = (function( root, factory ) {
     
         return DragAndDrop;
     });
+    
     /**
      * @fileOverview 组件基类。
      */
@@ -2712,6 +2713,8 @@ module.exports = (function( root, factory ) {
                         me._onFileStatusChange( cur, pre );
                     });
                 }
+    
+                file.setStatus( STATUS.QUEUED );
             },
     
             _onFileStatusChange: function( curStatus, preStatus ) {
@@ -2777,6 +2780,7 @@ module.exports = (function( root, factory ) {
     
         return Queue;
     });
+    
     /**
      * @fileOverview 队列
      */
