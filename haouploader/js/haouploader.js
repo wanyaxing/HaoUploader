@@ -193,8 +193,6 @@ var HaoUploader = {
                 file.on('statuschange', function( cur, prev ) {
                     if ( prev === 'progress' ) {
                         $prgress.hide().text('');
-                    } else if ( prev === 'queued' ) {
-                        $li.off( 'click' );
                     }
 
                     // 成功
