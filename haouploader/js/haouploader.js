@@ -50,6 +50,7 @@ var HaoUploader = {
                         .insertAfter(inputObj)
                         .attr('tabindex','0')
                         .attr('multiple',inputObj.attr('multiple'))
+                        .attr('max',inputObj.attr('max'))
                         ;
         inputObj.appendTo(dndObj);
         var targetObj = $('<li class="pick_which_upload_to_qiniu">+</li>').css({'position':'relative'}).insertAfter(inputObj);
@@ -82,7 +83,7 @@ var HaoUploader = {
             pick: {id:targetObj[0],'multiple':inputObj.attr('multiple')?true:false},
 
             //验证文件总数量, 超出则不允许加入队列。
-            fileNumLimit:inputObj.attr('multiple')?undefined:1,
+            fileNumLimit:inputObj.attr('multiple')?(inputObj.attr('max')?parseInt(inputObj.attr('max')):undefined):1,
             // 禁掉全局的拖拽功能。这样不会出现图片拖进页面的时候，把图片打开。
             disableGlobalDnd: true,
 
@@ -104,6 +105,7 @@ var HaoUploader = {
         uploader.updateInputValueOfInDND = function()
         {
             $(dndObj).find(inputObj).val($(dndObj).find('[url_preview]').map(function(){return $(this).attr('url_preview');}).get().join(','));
+            uploader.updateStatueOfPick();
         }
 
         uploader.updateDNDOfInputValue = function()
@@ -115,6 +117,25 @@ var HaoUploader = {
                     uploader.newPreviewObjOfFile(null,imgSrc);
                 }
             });
+            uploader.updateStatueOfPick();
+        }
+
+        uploader.updateStatueOfPick = function()
+        {
+            $pick = $(uploader.options.pick.id);
+            if ($(dndObj).attr('multiple') && $(dndObj).attr('max'))
+            {
+                if ($(dndObj).find('.filePreview').length>=parseInt($(dndObj).attr('max')))
+                {
+                    uploader.options.fileNumLimit = 0;
+                    $pick.hide();
+                }
+                else
+                {
+                    uploader.options.fileNumLimit = parseInt($(dndObj).attr('max')) - $(dndObj).find('.filePreview').length;
+                    $pick.appendTo($pick.parent()).show();
+                }
+            }
         }
 
         uploader.newPreviewObjOfFile = function(file,imgUrl)
@@ -137,6 +158,7 @@ var HaoUploader = {
                 $('<p class="progress"></p>').prependTo($li);
                 $('<div class="imgWrap"></div>').prependTo($li);
             }
+
 
             var $prgress = $li.find('p.progress').css({'opacity':'0.5'}),
 
@@ -245,12 +267,18 @@ var HaoUploader = {
                                                         }
                                                 }
                                             );
+                uploader.updateStatueOfPick();
             }
         }
 
 
         uploader.on('beforeFileQueued', function( file ){
             console.log('beforeFileQueued');
+            if ($(dndObj).attr('multiple') && $(dndObj).attr('max') && $(dndObj).find('.filePreview').length>=parseInt($(dndObj).attr('max')))
+            {
+                console.log('达到max值，忽略当前文件。');
+                return false;
+            }
             if (!file.previewObj)
             {
                 uploader.newPreviewObjOfFile(file);
