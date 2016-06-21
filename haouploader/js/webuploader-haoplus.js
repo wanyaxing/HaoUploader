@@ -7,15 +7,35 @@ if (!WebUploader)
 //axing add
 WebUploader.Uploader.register({
     'init':function(opts){
-        console.log('init',this);
         var uploader = this.owner;
         uploader.on('fileQueued', function (file) {
             file.setStatus( 'queued' );
+            $(uploader.options.pick.id).closest('form').find('[type=submit]').each(function(){
+                if ($(this).attr('webuploader-cout'))
+                {
+                    $(this).attr('webuploader-cout' , parseInt($(this).attr('webuploader-cout'))+1);
+                }
+                else
+                {
+                    $(this).attr('webuploader-cout' , 1);
+                }
+                $(this).attr('disabled','disabled');
+            });
         });
         uploader.on('uploadBeforeSend', function (block, data, header) {
             data['token'] = block.file.token;
         });
         uploader.on('uploadSuccess', function (file, ret) {
+            $(uploader.options.pick.id).closest('form').find('[type=submit]').each(function(){
+                if ($(this).attr('webuploader-cout'))
+                {
+                    $(this).attr('webuploader-cout' , parseInt($(this).attr('webuploader-cout'))-1);
+                }
+                if (!$(this).attr('webuploader-cout') || $(this).attr('webuploader-cout')==0)
+                {
+                    $(this).removeAttr('disabled');
+                }
+            });
         });
     }
     ,'before-send':function(block){

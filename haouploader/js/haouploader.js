@@ -10,7 +10,7 @@ var HaoUploader = {
         }
         if (!targetObj.attr('haouploader-uuid'))
         {
-            targetObj.attr('haouploader-uuid',Math.random());
+            targetObj.attr('haouploader-uuid',Math.random().toString(36).substr(2));
         }
         var uuid = targetObj.attr('haouploader-uuid');
         var uploader;
@@ -25,6 +25,23 @@ var HaoUploader = {
             HaoUploader['uploadList'][uuid] = uploader;
         }
         return uploader;
+    }
+    ,destroy:function(target){
+        targetObj = target.constructor == String ? $('#' + target) : $(target);
+        if (targetObj.length>1)
+        {
+            alert('注意，初始化时，只能接受唯一的dom对象');
+            return false;
+        }
+        var uuid = targetObj.attr('haouploader-uuid');
+        if (uuid && HaoUploader['uploadList'][uuid])
+        {
+            var uploader = HaoUploader['uploadList'][uuid];
+            uploader.destroy();
+            delete HaoUploader['uploadList'][uuid];
+            return true;
+        }
+        return false;
     }
     ,initUploader: function (inputObj)
     {
@@ -121,7 +138,7 @@ var HaoUploader = {
                 $('<div class="imgWrap"></div>').prependTo($li);
             }
 
-            var $prgress = $li.find('p.progress').css({'opacity':'0'}),
+            var $prgress = $li.find('p.progress').css({'opacity':'0.5'}),
 
             $wrap = $li.find( 'div.imgWrap' ),
 
@@ -203,6 +220,7 @@ var HaoUploader = {
                 img = $('<img src="'+imgUrl+'?imageView2/1/w/'+thumbnailWidth+'/h/'+thumbnailHeight+'/">').css({'width':'100%','height':'100%'});
                 $wrap.empty().append( img );
                 $li.attr('url_preview',imgUrl);
+                $prgress.css({'opacity':'0'});
             }
 
 
@@ -250,6 +268,7 @@ var HaoUploader = {
             console.log(file , ret,json);
             if (json && json.urlPreview) {
                 $li.attr('url_preview',json.urlPreview);
+                $li.find('.progress').css({'opacity':'0'});
             } else {
                 alert('上传失败，请检查');
             }
@@ -262,7 +281,7 @@ var HaoUploader = {
             console.log('uploadProgress');
             console.log(file,percentage);
             var $li = $(file.previewObj);
-            $li.find('.progress').text( parseInt(percentage * 100) + '%' );
+            $li.find('.progress').text( parseInt(percentage * 100) + '%' ).css('opacity',1-percentage);
         });
 
         uploader.on('error', function(type){

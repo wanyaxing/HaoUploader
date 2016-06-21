@@ -2324,7 +2324,8 @@ module.exports = (function( root, factory ) {
                         size = file.size;
     
                         // 如果压缩后，比原来还大则不用压缩后的。
-                        if ( !noCompressIfLarger || blob.size < size ) {
+                        // 如果压缩失败（size == 0 )，也别用。
+                        if (blob.size>0 && ( !noCompressIfLarger || blob.size < size )) {
                             // file.source.destroy && file.source.destroy();
                             file.source = blob;
                             file.size = blob.size;
@@ -2349,6 +2350,7 @@ module.exports = (function( root, factory ) {
             }
         });
     });
+    
     /**
      * @fileOverview 文件属性封装
      */
@@ -2923,13 +2925,13 @@ module.exports = (function( root, factory ) {
              * @description 当一批文件添加进队列以后触发。
              * @for  Uploader
              */
-            
+    
             /**
              * @property {Boolean} [auto=false]
              * @namespace options
              * @for Uploader
              * @description 设置为 true 后，不需要手动调用上传，有文件选择即开始上传。
-             * 
+             *
              */
     
             /**
@@ -2950,7 +2952,7 @@ module.exports = (function( root, factory ) {
                 files = $.map( files, function( file ) {
                     return me._addFile( file );
                 });
-    			
+    
     			if ( files.length ) {
     
                     me.owner.trigger( 'filesQueued', files );
@@ -2993,6 +2995,10 @@ module.exports = (function( root, factory ) {
                 var me = this;
     
                 file = file.id ? file : me.queue.getFile( file );
+    
+                if( !me.queue.getFile( file.id ) ) {
+                    return false;
+                }
     
                 this.request( 'cancel-file', file );
     
@@ -3090,6 +3096,7 @@ module.exports = (function( root, factory ) {
         });
     
     });
+    
     /**
      * @fileOverview 添加获取Runtime相关信息的方法。
      */

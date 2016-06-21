@@ -1182,7 +1182,7 @@
                 return;
             }
     
-            RuntimeClent.call( this, 'DragAndDrop', true );
+            RuntimeClent.call( this, 'DragAndDrop' );
         }
     
         DragAndDrop.options = {
@@ -1207,7 +1207,6 @@
     
         return DragAndDrop;
     });
-    
     /**
      * @fileOverview 组件基类。
      */
@@ -2738,8 +2737,6 @@
                         me._onFileStatusChange( cur, pre );
                     });
                 }
-    
-                file.setStatus( STATUS.QUEUED );
             },
     
             _onFileStatusChange: function( curStatus, preStatus ) {
@@ -2805,7 +2802,6 @@
     
         return Queue;
     });
-    
     /**
      * @fileOverview 队列
      */
