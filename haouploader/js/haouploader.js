@@ -254,8 +254,8 @@ var HaoUploader = {
                         {
                             uploader.removeFile( file , true);
                         }
-                        uploader.updateInputValueOfInDND();
                         $(this).remove();
+                        uploader.updateInputValueOfInDND();
                     }
                 });
                 $li.insertBefore( uploader.options.pick.id );
